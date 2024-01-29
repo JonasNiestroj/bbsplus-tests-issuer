@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <style>
+            .flex {
+                display: flex;
+                flex-direction: column;
+            }
+            label {
+                margin-top: 15px;
+            }
+        </style>
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+        <script lang="text/javascript">
+            window.createOffer = () => {
+                const fields = ["firstname", "lastname", "dateOfBirth", "country"]
+
+                const person = {}
+
+                fields.forEach(field => {
+                    person[field] = document.getElementById(field).value
+                })
+
+                fetch("http://localhost:8000/offer", {body: JSON.stringify(person), method: "POST", headers: {'Content-Type': "application/json"}}).then(response => {
+                    response.text().then(url => {
+                        document.getElementById("offer").innerHTML = ''
+                        new QRCode(document.getElementById("offer"), url)
+                    })
+                })
+            }
+        </script>
+    </head>
+    <body>
+        {{#each credentials}}
+            <div>{{this.id}}</div>
+        {{/each}}
+        <div class="flex">
+        <label>
+            <span>Firstname</span>
+            <input type="text" id="firstname" />
+        </label>
+        <label>
+            <span>Lastname</span>
+            <input type="text" id="lastname" />
+        </label>
+        <label>
+            <span>Date of birth</span>
+            <input type="text" id="dateOfBirth" />
+        </label>
+        <label>
+            <span>Country</span>
+            <input type="text" id="country" />
+        </label>
+        <button style="width: 150px; margin-top: 25px" onclick="window.createOffer()">
+            Create credential
+        </button>
+
+        <div id="offer">
+
+        </div>
+        </div>
+
+    </body>
+</html>
